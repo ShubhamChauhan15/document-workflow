@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Configure Git safe directory
+        run: |
+          git config --global --add safe.directory /home/runner/work/document-workflow/
+          
           
       - name: Checkout repository
         uses: actions/checkout@v3
