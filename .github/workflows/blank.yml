@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Ensure access to private repositories
+
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
