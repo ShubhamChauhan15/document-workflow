@@ -17,12 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run configuration script
-        run: |
-           sudo chmod +x ./config.sh  # Make the script executable
-           sudo ./config.sh --url https://github.com/ShubhamChauhan15/document-workflow --token ${{ secrets.GITHUB_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Securely pass the GitHub token as an environment variable
           
       - name: Checkout repository
         uses: actions/checkout@v3
