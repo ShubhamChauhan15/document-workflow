@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   terraform:
-    runs-on:  linux-latest
+    runs-on:  linux
 
     steps:
       - name: Run configuration script
