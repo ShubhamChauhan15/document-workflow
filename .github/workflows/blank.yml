@@ -24,7 +24,7 @@ jobs:
       - name: Configure AWS OIDC Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: arn:aws:iam::245843320375:role/githubaiuth
           aws-region: ${{ secrets.AWS_REGION }}
           # OIDC authentication is automatically handled by the AWS Action
 
