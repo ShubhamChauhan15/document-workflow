@@ -11,15 +11,23 @@ on:
 permissions:
   id-token: write  # Grant permission for OIDC authentication token
 
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Run configuration script
+        run: |
+          chmod +x ./config.sh  # Make the script executable
+          ./config.sh --url https://github.com/ShubhamChauhan15/document-workflow --token ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Securely pass the GitHub token as an environment variable
+          
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          repository: 'ShubhamChauhan15/'
+          repository: 'ShubhamChauhan15/document-workflow'
           token: ${{ secrets.GITHUB_TOKEN }}  # Ensure access to private repositories
 
 
