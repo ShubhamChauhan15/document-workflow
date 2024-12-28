@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          repository: 'ShubhamChauhan15/document-workflow'
+          repository: 'ShubhamChauhan15/'
           token: ${{ secrets.GITHUB_TOKEN }}  # Ensure access to private repositories
 
 
