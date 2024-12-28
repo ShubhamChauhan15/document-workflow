@@ -26,6 +26,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::245843320375:role/githubaiuth
           aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHubActionsSession
           # OIDC authentication is automatically handled by the AWS Action
 
       - name: Terraform Init
