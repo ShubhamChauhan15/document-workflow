@@ -8,8 +8,8 @@ on:
     branches:
       - testing
 
-permissions:
-  id-token: write  # Grant permission for OIDC authentication token
+#permissions:
+  #id-token: write  # Grant permission for OIDC authentication token
 
 jobs:
   terraform:
