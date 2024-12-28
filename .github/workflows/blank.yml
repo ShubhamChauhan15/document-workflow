@@ -3,10 +3,10 @@ name: 'Terraform Apply with OIDC Authentication'
 on:
   push:
     branches:
-      - main  
+      - testing 
   pull_request:
     branches:
-      - main  
+      - testing
 
 jobs:
   terraform:
