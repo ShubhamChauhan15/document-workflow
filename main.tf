@@ -24,10 +24,10 @@ module "VPC-MODULE" {
 
 module "Instance_module" {
   source              = "./Instance_module"
-  vpc_id              = module.vpc.vpc_id
-  private_subnet_id   = module.vpc.private_subnet_id
+  vpc_id              = module.VPC-MODULE.vpc_id
+  private_subnet_id   = module.VPC-MODULE.private_subnet_id
   ami_id              = "ami-0fd05997b4dff7aac"  
   instance_type       = "t2.micro"
-  security_group_id   = module.vpc.private_sg_id
+  security_group_id   = module.VPC-MODULE.private_sg_id
 }
 
