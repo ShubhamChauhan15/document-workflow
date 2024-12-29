@@ -13,7 +13,7 @@ provider "aws" {
   region  = "ap-south-1"
 }
 
-module "vpc" {
+module "VPC-MODULE" {
   source               = "./VPC_module"
   vpc_cidr_block       = "10.0.0.0/16"
   public_subnet_cidr   = "10.0.1.0/24"
@@ -22,7 +22,7 @@ module "vpc" {
   private_subnet_az    = "ap-south-1b"
 }
 
-module "ec2_instance" {
+module "Instance_module" {
   source              = "./Instance_module"
   vpc_id              = module.vpc.vpc_id
   private_subnet_id   = module.vpc.private_subnet_id
