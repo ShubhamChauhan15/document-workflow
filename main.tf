@@ -1,35 +1,33 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.27"
+    }
+  }
+
+  required_version = ">= 0.14.9"
+}
 provider "aws" {
-  region = "us-east-1"
+  
+  region  = "ap-south-1"
 }
 
 module "vpc" {
-  source                = "./modules/vpc"
-  vpc_cidr              = "10.0.0.0/16"
-  public_subnet_cidr    = "10.0.1.0/24"
-  private_subnet_cidr   = "10.0.2.0/24"
-  az_1                  = "us-east-1a"
-  az_2                  = "us-east-1b"
-  ami_id                = "ami-xxxxxxxxxxxxxxxxx"  # Replace with your AMI ID
-  instance_type         = "t3.micro"
-  region                = "us-east-1"
+  source               = "./VPC_module"
+  vpc_cidr_block       = "10.0.0.0/16"
+  public_subnet_cidr   = "10.0.1.0/24"
+  private_subnet_cidr  = "10.0.2.0/24"
+  public_subnet_az     = "ap-south-1a"
+  private_subnet_az    = "ap-south-1b"
 }
 
-output "vpc_id" {
-  value = module.vpc.vpc_id
+module "ec2_instance" {
+  source              = "./Instance_module"
+  vpc_id              = module.vpc.vpc_id
+  private_subnet_id   = module.vpc.private_subnet_id
+  ami_id              = "ami-0fd05997b4dff7aac"  
+  instance_type       = "t2.micro"
+  security_group_id   = module.vpc.private_sg_id
 }
 
-output "public_subnet_id" {
-  value = module.vpc.public_subnet_id
-}
-
-output "private_subnet_id" {
-  value = module.vpc.private_subnet_id
-}
-
-output "instance_id" {
-  value = module.vpc.instance_id
-}
-
-output "instance_public_ip" {
-  value = module.vpc.instance_public_ip
-}
