@@ -3,10 +3,10 @@ name: 'Terraform Apply with OIDC Authentication'
 on:
   push:
     branches:
-      - testing
+      - main
   pull_request:
     branches:
-      - testing
+      - main
 
 permissions:
   id-token: write  # Grant permission for OIDC authentication token
