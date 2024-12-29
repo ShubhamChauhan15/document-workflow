@@ -44,6 +44,9 @@ jobs:
 
       - name: Terraform Init
         run: terraform init  # Initialize Terraform
+        
+      - name: Terraform refresh
+        run: terraform refresh  # Initialize Terraform
 
       - name: Terraform Plan
         run: terraform plan  # Run Terraform Plan
