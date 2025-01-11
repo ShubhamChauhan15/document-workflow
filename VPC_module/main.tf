@@ -23,26 +23,30 @@ resource "aws_security_group" "private_sg" {
 }
 
 
-resource "aws_vpc_endpoint" "ssm_endpoint" {
-  vpc_id            = aws_vpc.epc_vpc.id
-  service_name      = "com.amazonaws.${var.region}.ssm"
-  route_table_ids   = [aws_route_table.private_route_table.id]
-  private_dns_enabled = true
-  vpc_endpoint_type = "Interface"
-  tags = {
-    Name = "SSM VPC Endpoint"
-  }
-}
-
 resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ec2messages"
-  route_table_ids   = [aws_route_table.private_route_table.id]
+  vpc_endpoint_type = "Interface"  # Specify Interface type for EC2 Messages
+  subnet_ids        = aws_subnet.private_subnet.*.id  # Make sure you specify the correct subnets
   private_dns_enabled = true
+  security_group_ids = [aws_security_group.sg.id]  # Optionally, associate a security group
   tags = {
     Name = "EC2 Messages VPC Endpoint"
   }
 }
+
+resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
+  vpc_id            = aws_vpc.epc_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ssmmessages"
+  vpc_endpoint_type = "Interface"  # Specify Interface type for SSM Messages
+  subnet_ids        = aws_subnet.private_subnet.*.id  # Ensure to specify the correct subnets
+  private_dns_enabled = true
+  security_group_ids = [aws_security_group.sg.id]  # Optionally, associate a security group
+  tags = {
+    Name = "SSM Messages VPC Endpoint"
+  }
+}
+
 
 resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
