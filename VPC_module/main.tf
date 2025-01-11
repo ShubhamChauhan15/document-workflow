@@ -89,12 +89,12 @@ resource "aws_networkmanager_global_network" "global_network" {
   }
 }
 
-#resource "aws_networkmanager_site" "site" {
- # global_network_id = aws_networkmanager_global_network.global_network.id
- # location {
- #   address = "VPC Location Address"
-#  }
-#  tags = {
-#    Name = "EPC Site"
- # }
-# }
+resource "aws_networkmanager_site" "site" {
+  global_network_id = aws_networkmanager_global_network.global_network.id
+  location {
+   address = "VPC Location Address"
+  }
+ tags = {
+    Name = "EPC Site"
+  }
+ }
