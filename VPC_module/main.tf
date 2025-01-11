@@ -29,7 +29,7 @@ resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
   vpc_endpoint_type = "Interface"  # Specify Interface type for EC2 Messages
   subnet_ids        = aws_subnet.private_subnet.*.id  # Make sure you specify the correct subnets
   private_dns_enabled = true
-  security_group_ids = [aws_security_group.sg.id]  # Optionally, associate a security group
+  security_group_ids = [aws_security_group.private_sg.id]  # Optionally, associate a security group
   tags = {
     Name = "EC2 Messages VPC Endpoint"
   }
