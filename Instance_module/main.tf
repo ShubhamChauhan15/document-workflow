@@ -25,6 +25,12 @@ resource "aws_instance" "private_instance" {
   instance_type          = var.instance_type
   subnet_id              = var.private_subnet_id
   iam_instance_profile   = aws_iam_instance_profile.ec2_ssm_instance_profile.name
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo systemctl status amazon-ssm-agent
+              sudo systemctl start amazon-ssm-agent
+              sudo systemctl status amazon-ssm-agent
+              EOF
 
   tags = {
     Name = "Private Instance"
