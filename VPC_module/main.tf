@@ -83,12 +83,12 @@ resource "aws_networkmanager_site" "site" {
   }
 }
 
-resource "aws_networkmanager_connection" "vpc_connection" {
-  global_network_id = aws_networkmanager_global_network.global_network.id
-  site_id           = aws_networkmanager_site.site.id
-  connection_type   = "VPC"  
-  bandwidth         = 100  
-  tags = {
-    Name = "VPC to Network Connection"
-  }
-}
+#resource "aws_networkmanager_connection" "vpc_connection" {
+#  global_network_id = aws_networkmanager_global_network.global_network.id
+#  site_id           = aws_networkmanager_site.site.id
+#  connection_type   = "VPC"  
+#  bandwidth         = 100  
+#  tags = {
+#    Name = "VPC to Network Connection"
+#  }
+#}
