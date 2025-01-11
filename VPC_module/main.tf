@@ -48,16 +48,6 @@ resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
 }
 
 
-resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
-  vpc_id            = aws_vpc.epc_vpc.id
-  service_name      = "com.amazonaws.${var.region}.ssmmessages"
-  route_table_ids   = [aws_route_table.private_route_table.id]
-  private_dns_enabled = true
-  tags = {
-    Name = "SSM Messages VPC Endpoint"
-  }
-}
-
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.epc_vpc.id
   tags = {
