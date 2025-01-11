@@ -28,6 +28,7 @@ resource "aws_vpc_endpoint" "ssm_endpoint" {
   service_name      = "com.amazonaws.${var.region}.ssm"
   route_table_ids   = [aws_route_table.private_route_table.id]
   private_dns_enabled = true
+  vpc_endpoint_type = "Interface"
   tags = {
     Name = "SSM VPC Endpoint"
   }
