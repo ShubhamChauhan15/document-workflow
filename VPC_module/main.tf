@@ -20,16 +20,29 @@ resource "aws_security_group" "private_sg" {
   name        = "private-sg"
   description = "Security group for EC2 instance in private subnet"
   vpc_id      = aws_vpc.epc_vpc.id
-}
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ec2messages"
-  vpc_endpoint_type = "Interface"  # Specify Interface type for EC2 Messages
-  subnet_ids        = aws_subnet.private_subnet.*.id  # Make sure you specify the correct subnets
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = [aws_subnet.private_subnet.id]
   private_dns_enabled = true
-  security_group_ids = [aws_security_group.private_sg.id]  # Optionally, associate a security group
+  security_group_ids = [aws_security_group.private_sg.id]
   tags = {
     Name = "EC2 Messages VPC Endpoint"
   }
@@ -38,15 +51,14 @@ resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
 resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ssmmessages"
-  vpc_endpoint_type = "Interface"  # Specify Interface type for SSM Messages
-  subnet_ids        = aws_subnet.private_subnet.*.id  # Ensure to specify the correct subnets
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = [aws_subnet.private_subnet.id]
   private_dns_enabled = true
-  security_group_ids = [aws_security_group.private_sg.id]  # Optionally, associate a security group
+  security_group_ids = [aws_security_group.private_sg.id]
   tags = {
     Name = "SSM Messages VPC Endpoint"
   }
 }
-
 
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.epc_vpc.id
@@ -60,7 +72,6 @@ resource "aws_route_table_association" "private_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-
 resource "aws_networkmanager_global_network" "global_network" {
   description = "Global Network for EPC VPC"
   tags = {
@@ -68,22 +79,12 @@ resource "aws_networkmanager_global_network" "global_network" {
   }
 }
 
-resource "aws_networkmanager_site" "site" {
-  global_network_id = aws_networkmanager_global_network.global_network.id
-  location {
-    address = "VPC Location Address" 
-  }
-  tags = {
-    Name = "EPC Site"
-  }
-}
-
-#resource "aws_networkmanager_connection" "vpc_connection" {
-#  global_network_id = aws_networkmanager_global_network.global_network.id
-#  site_id           = aws_networkmanager_site.site.id
-#  connection_type   = "VPC"  
-#  bandwidth         = 100  
-#  tags = {
-#    Name = "VPC to Network Connection"
+#resource "aws_networkmanager_site" "site" {
+ # global_network_id = aws_networkmanager_global_network.global_network.id
+ # location {
+ #   address = "VPC Location Address"
 #  }
-#}
+#  tags = {
+#    Name = "EPC Site"
+ # }
+# }
