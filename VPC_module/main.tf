@@ -7,15 +7,6 @@ resource "aws_vpc" "epc_vpc" {
   }
 }
 
-resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.epc_vpc.id
-  cidr_block              = var.public_subnet_cidr
-  availability_zone       = var.public_subnet_az
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "Public Subnet"
-  }
-}
 resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.epc_vpc.id
   cidr_block              = var.private_subnet_cidr
@@ -25,44 +16,45 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-resource "aws_internet_gateway" "internet_gateway" {
-  vpc_id = aws_vpc.epc_vpc.id
+resource "aws_security_group" "private_sg" {
+  name        = "private-sg"
+  description = "Security group for EC2 instance in private subnet"
+  vpc_id      = aws_vpc.epc_vpc.id
+}
+
+
+resource "aws_vpc_endpoint" "ssm_endpoint" {
+  vpc_id            = aws_vpc.epc_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ssm"
+  route_table_ids   = [aws_route_table.private_route_table.id]
+  private_dns_enabled = true
   tags = {
-    Name = "Internet Gateway"
+    Name = "SSM VPC Endpoint"
   }
 }
 
-resource "aws_eip" "nat_eip" {
-  vpc = true
-}
-
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet.id
-  depends_on    = [aws_internet_gateway.internet_gateway]
-}
-resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.epc_vpc.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.internet_gateway.id
-  }
+resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
+  vpc_id            = aws_vpc.epc_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ec2messages"
+  route_table_ids   = [aws_route_table.private_route_table.id]
+  private_dns_enabled = true
   tags = {
-    Name = "Public Route Table"
+    Name = "EC2 Messages VPC Endpoint"
   }
 }
 
-resource "aws_route_table_association" "public_association" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.public_route_table.id
+resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
+  vpc_id            = aws_vpc.epc_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ssmmessages"
+  route_table_ids   = [aws_route_table.private_route_table.id]
+  private_dns_enabled = true
+  tags = {
+    Name = "SSM Messages VPC Endpoint"
+  }
 }
 
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.epc_vpc.id
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
-  }
   tags = {
     Name = "Private Route Table"
   }
@@ -73,8 +65,30 @@ resource "aws_route_table_association" "private_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-resource "aws_security_group" "private_sg" {
-  name        = "private-sg"
-  description = "Security group for EC2 instance in private subnet"
-  vpc_id      = aws_vpc.epc_vpc.id
+
+resource "aws_networkmanager_global_network" "global_network" {
+  description = "Global Network for EPC VPC"
+  tags = {
+    Name = "EPC Global Network"
+  }
+}
+
+resource "aws_networkmanager_site" "site" {
+  global_network_id = aws_networkmanager_global_network.global_network.id
+  location {
+    address = "VPC Location Address" 
+  }
+  tags = {
+    Name = "EPC Site"
+  }
+}
+
+resource "aws_networkmanager_connection" "vpc_connection" {
+  global_network_id = aws_networkmanager_global_network.global_network.id
+  site_id           = aws_networkmanager_site.site.id
+  connection_type   = "VPC"  
+  bandwidth         = 100  
+  tags = {
+    Name = "VPC to Network Connection"
+  }
 }
