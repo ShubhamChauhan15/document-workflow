@@ -27,3 +27,9 @@ variable "private_subnet_az" {
   type        = string
   default     = "us-east-1b"
 }
+
+variable "region" {
+  description = "Availability zone for the private subnet"
+  type        = string
+  default     = "ap-south-1"
+}
