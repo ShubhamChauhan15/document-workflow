@@ -47,6 +47,12 @@ resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
     Name = "EC2 Messages VPC Endpoint"
   }
 }
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id            =  aws_vpc.epc_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ssm"
+  route_table_ids   =  aws_route_table.private_route_table.id
+  security_group_ids = [aws_security_group.private_sg.id]
+}
 
 resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
