@@ -48,12 +48,16 @@ resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
   }
 }
 resource "aws_vpc_endpoint" "ssm" {
-  vpc_id            =  aws_vpc.epc_vpc.id
+  vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ssm"
-  route_table_ids   =  aws_route_table.private_route_table.id
+  vpc_endpoint_type = "Interface"  # Ensure type is Interface for endpoint in a subnet
+  subnet_ids        = [aws_subnet.private_subnet.id] # Specify the subnets for interface endpoint
+  private_dns_enabled = true
   security_group_ids = [aws_security_group.private_sg.id]
+  tags = {
+    Name = "SSM VPC Endpoint"
+  }
 }
-
 resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ssmmessages"
