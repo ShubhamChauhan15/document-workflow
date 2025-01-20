@@ -25,7 +25,7 @@ module "Instance_module" {
   source              = "./Instance_module"
   vpc_id              = module.VPC-MODULE.vpc_id
   private_subnet_id   = module.VPC-MODULE.private_subnet_id
-  ami_id              = "ami-0973769d2c4406635"
+  ami_id              = "ami-08cf815cff6ee258a"
   instance_type       = "t2.micro"
   security_group_id   = module.VPC-MODULE.private_sg_id
 }
