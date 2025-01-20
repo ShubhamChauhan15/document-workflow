@@ -82,19 +82,19 @@ resource "aws_route_table_association" "private_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-resource "aws_networkmanager_global_network" "global_network" {
-  description = "Global Network for EPC VPC"
-  tags = {
-    Name = "EPC Global Network"
+#resource "aws_networkmanager_global_network" "global_network" {
+#  description = "Global Network for EPC VPC"
+#  tags = {
+#    Name = "EPC Global Network"
   }
 }
 
-resource "aws_networkmanager_site" "site" {
-  global_network_id = aws_networkmanager_global_network.global_network.id
-  location {
-   address = "VPC Location Address"
-  }
- tags = {
-    Name = "EPC Site"
-  }
- }
+#resource "aws_networkmanager_site" "site" {
+#  global_network_id = aws_networkmanager_global_network.global_network.id
+ # location {
+ #  address = "VPC Location Address"
+ # }
+ #tags = {
+ #   Name = "EPC Site"
+ # }
+# }
