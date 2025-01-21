@@ -86,7 +86,7 @@ resource "aws_route_table_association" "private_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-# Network Manager Global Network Configuration
+
 resource "aws_networkmanager_global_network" "global_network" {
   description = "Global Network for EPC VPC"
   tags = {
@@ -114,7 +114,6 @@ resource "aws_ec2_transit_gateway" "tgw" {
   }
 }
 
-# Create Transit Gateway Attachment to VPC
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attachment" {
   transit_gateway_id = aws_ec2_transit_gateway.tgw.id
   vpc_id             = aws_vpc.epc_vpc.id
