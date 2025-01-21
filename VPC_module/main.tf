@@ -135,9 +135,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_route_propagatio
 resource "aws_networkmanager_transit_gateway_registration" "tgw_registration" {
   global_network_id = aws_networkmanager_global_network.global_network.id
   transit_gateway_arn = aws_ec2_transit_gateway.tgw.arn
-  tags = {
-    Name = "Transit Gateway Registration"
-  }
+  
 }
 
 resource "aws_ec2_transit_gateway_route_table" "tgw_route_table" {
