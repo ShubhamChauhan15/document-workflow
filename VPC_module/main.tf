@@ -47,17 +47,19 @@ resource "aws_vpc_endpoint" "ec2_messages_endpoint" {
     Name = "EC2 Messages VPC Endpoint"
   }
 }
+
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ssm"
-  vpc_endpoint_type = "Interface"  # Ensure type is Interface for endpoint in a subnet
-  subnet_ids        = [aws_subnet.private_subnet.id] # Specify the subnets for interface endpoint
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = [aws_subnet.private_subnet.id]
   private_dns_enabled = true
   security_group_ids = [aws_security_group.private_sg.id]
   tags = {
     Name = "SSM VPC Endpoint"
   }
 }
+
 resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
   vpc_id            = aws_vpc.epc_vpc.id
   service_name      = "com.amazonaws.${var.region}.ssmmessages"
@@ -70,6 +72,7 @@ resource "aws_vpc_endpoint" "ssm_messages_endpoint" {
   }
 }
 
+
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.epc_vpc.id
   tags = {
@@ -77,11 +80,13 @@ resource "aws_route_table" "private_route_table" {
   }
 }
 
+
 resource "aws_route_table_association" "private_association" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private_route_table.id
 }
 
+# Network Manager Global Network Configuration
 resource "aws_networkmanager_global_network" "global_network" {
   description = "Global Network for EPC VPC"
   tags = {
@@ -89,12 +94,55 @@ resource "aws_networkmanager_global_network" "global_network" {
   }
 }
 
+
 resource "aws_networkmanager_site" "site" {
   global_network_id = aws_networkmanager_global_network.global_network.id
   location {
-   address = "VPC Location Address"
+    address = "VPC Location Address"
   }
- tags = {
+  tags = {
     Name = "EPC Site"
   }
- }
+}
+
+
+resource "aws_ec2_transit_gateway" "tgw" {
+  description = "EPC Transit Gateway"
+  amazon_side_asn = 64512 # Optional, define the ASN for the TGW
+  tags = {
+    Name = "EPC Transit Gateway"
+  }
+}
+
+# Create Transit Gateway Attachment to VPC
+resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attachment" {
+  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
+  vpc_id             = aws_vpc.epc_vpc.id
+  subnet_ids         = [aws_subnet.private_subnet.id]
+
+  tags = {
+    Name = "VPC Attachment to Transit Gateway"
+  }
+}
+
+
+resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_route_propagation" {
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_route_table.id
+  transit_gateway_attachment_id = aws_ec2_transit_gateway_vpc_attachment.tgw_attachment.id
+}
+
+
+resource "aws_networkmanager_transit_gateway_registration" "tgw_registration" {
+  global_network_id = aws_networkmanager_global_network.global_network.id
+  transit_gateway_arn = aws_ec2_transit_gateway.tgw.arn
+  tags = {
+    Name = "Transit Gateway Registration"
+  }
+}
+
+resource "aws_ec2_transit_gateway_route_table" "tgw_route_table" {
+  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
+  tags = {
+    Name = "EPC Transit Gateway Route Table"
+  }
+}
